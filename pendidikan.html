@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Riwayat Pendidikan — Indra</title>
+  <link rel="stylesheet" href="style.css" />
+  <style>
+    .page-hero {
+      min-height: 40vh;
+      display: flex;
+      align-items: center;
+      padding: 140px 40px 80px;
+      background: linear-gradient(135deg, rgba(124,255,212,0.04) 0%, transparent 60%);
+    }
+    .page-hero-inner { max-width: 1100px; margin: 0 auto; width: 100%; }
+    .breadcrumb {
+      font-family: 'Space Mono', monospace;
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      margin-bottom: 20px;
+    }
+    .breadcrumb a { color: var(--accent); text-decoration: none; }
+    .breadcrumb a:hover { opacity: 0.7; }
+
+    .pendidikan-section { max-width: 1100px; margin: 0 auto; padding: 0 40px 100px; }
+
+    .edu-ordered-list {
+      list-style: none;
+      counter-reset: edu-counter;
+      margin-top: 48px;
+    }
+
+    .edu-ordered-list > li {
+      counter-increment: edu-counter;
+      position: relative;
+      padding: 40px 40px 40px 100px;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      margin-bottom: 20px;
+      transition: var(--transition);
+      overflow: hidden;
+    }
+
+    .edu-ordered-list > li::before {
+      content: counter(edu-counter, decimal-leading-zero);
+      position: absolute;
+      left: 28px; top: 40px;
+      font-family: 'Space Mono', monospace;
+      font-size: 2rem;
+      font-weight: 700;
+      color: var(--accent);
+      opacity: 0.3;
+      line-height: 1;
+    }
+
+    .edu-ordered-list > li::after {
+      content: '';
+      position: absolute;
+      left: 0; top: 0; bottom: 0;
+      width: 3px;
+      background: linear-gradient(to bottom, var(--accent), var(--accent-2));
+      opacity: 0;
+      transition: var(--transition);
+    }
+
+    .edu-ordered-list > li:hover { border-color: rgba(124,255,212,0.3); transform: translateX(8px); }
+    .edu-ordered-list > li:hover::after { opacity: 1; }
+
+    .edu-period {
+      font-family: 'Space Mono', monospace;
+      font-size: 0.75rem;
+      color: var(--accent);
+      letter-spacing: 0.1em;
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .edu-period::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: var(--border);
+      max-width: 80px;
+    }
+
+    .edu-level {
+      font-family: 'Syne', sans-serif;
+      font-size: 1.4rem;
+      font-weight: 700;
+      color: var(--text-primary);
+      margin-bottom: 4px;
+    }
+
+    .edu-institution { font-size: 1rem; color: var(--accent-2); font-weight: 500; margin-bottom: 12px; }
+    .edu-notes { font-size: 0.9rem; color: var(--text-secondary); line-height: 1.7; }
+
+    .edu-detail-list { list-style: none; margin-top: 14px; }
+
+    .edu-detail-list li {
+      font-size: 0.88rem;
+      color: var(--text-secondary);
+      padding: 6px 0;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+    }
+
+    .edu-detail-list li::before {
+      content: '→';
+      color: var(--accent);
+      flex-shrink: 0;
+      font-family: 'Space Mono', monospace;
+    }
+
+    .edu-detail-list li:last-child { border-bottom: none; }
+
+    .edu-badge {
+      display: inline-block;
+      font-family: 'Space Mono', monospace;
+      font-size: 0.65rem;
+      padding: 3px 10px;
+      border-radius: 20px;
+      margin-left: 10px;
+      letter-spacing: 0.05em;
+      background: var(--accent-dim);
+      color: var(--accent);
+      border: 1px solid rgba(124,255,212,0.3);
+      vertical-align: middle;
+    }
+
+    .back-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.9rem;
+      color: var(--text-secondary);
+      text-decoration: none;
+      transition: var(--transition);
+      margin-bottom: 40px;
+    }
+    .back-btn:hover { color: var(--accent); gap: 12px; }
+
+    @media (max-width: 600px) {
+      .page-hero { padding: 120px 24px 60px; }
+      .pendidikan-section { padding: 0 24px 80px; }
+      .edu-ordered-list > li { padding: 32px 24px 32px 80px; }
+    }
+  </style>
+</head>
+<body>
+
+  <nav>
+    <a href="index.html" class="nav-logo">dev<span>.profile</span></a>
+    <ul class="nav-links">
+      <li><a href="index.html#about">Tentang</a></li>
+      <li><a href="index.html#skills">Keahlian</a></li>
+      <li><a href="index.html#projects">Proyek</a></li>
+      <li><a href="pendidikan.html" style="color: var(--accent);">Pendidikan</a></li>
+      <li><a href="skill.html">Skill Detail</a></li>
+      <li><a href="index.html#contact">Kontak</a></li>
+    </ul>
+  </nav>
+
+  <div class="page-hero">
+    <div class="page-hero-inner">
+      <p class="breadcrumb"><a href="index.html">Beranda</a> / Riwayat Pendidikan</p>
+      <p class="section-label">Perjalanan Belajar</p>
+      <h1 class="section-title">Riwayat <span class="highlight">Pendidikan</span></h1>
+      <p style="color: var(--text-secondary); font-size: 1.05rem; max-width: 560px; line-height: 1.8;">
+        Perjalanan pendidikan dari SD hingga sekarang 
+      </p>
+    </div>
+  </div>
+
+  <div class="pendidikan-section">
+    <a href="index.html" class="back-btn">← Kembali ke Beranda</a>
+
+    <h2 class="section-title" style="font-size: 1.5rem; margin-bottom: 0;">Jenjang Pendidikan <span class="highlight">(SD — Sekarang)</span></h2>
+
+    <ol class="edu-ordered-list">
+
+      <li class="reveal">
+        <p class="edu-period">SD</p>
+        <h3 class="edu-level">Sekolah Dasar <span class="edu-badge">SELESAI</span></h3>
+        <p class="edu-institution">SDN 2 Pangkung Karung</p>
+        <p class="edu-notes">Awal perjalanan pendidikan formal</p>
+        <ul class="edu-detail-list">
+          <li>Belajar membaca, menulis, dan berhitung sebagai fondasi</li>
+        </ul>
+      </li>
+
+      <li class="reveal">
+        <p class="edu-period">SMP</p>
+        <h3 class="edu-level">Sekolah Menengah Pertama <span class="edu-badge">SELESAI</span></h3>
+        <p class="edu-institution">SMP Negeri 1 Kerambitan</p>
+        <p class="edu-notes">Masa SMP adalah waktu saya mulai tertarik pada bidang sains dan teknologi. Mulai berkenalan dengan pemrograman dasar.</p>
+        <ul class="edu-detail-list">
+          <li>Mulai belajar dasar-dasar komputer dan internet</li>
+        </ul>
+      </li>
+
+      <li class="reveal">
+        <p class="edu-period">SMA</p>
+        <h3 class="edu-level">Sekolah Menengah Atas <span class="edu-badge">SELESAI</span></h3>
+        <p class="edu-institution">SMA Negeri 1 Kerambitan</p>
+        <p class="edu-notes">Di jenjang ini saya mulai serius menekuni bidang teknologi informasi dan pengembangan web. Pertama kali menulis kode HTML dan CSS.</p>
+        <ul class="edu-detail-list">
+          <li>Pertama kali belajar HTML, CSS, dan JavaScript</li>
+        </ul>
+      </li>
+
+      <li class="reveal">
+        <p class="edu-period">TAHAP 04 — PERGURUAN TINGGI</p>
+        <h3 class="edu-level">Universitas / Politeknik <span class="edu-badge">AKTIF</span></h3>
+        <p class="edu-institution">Universitas Hindu Negeri I Gusti Bagus Sugriwa Denpasar</p>
+        <p class="edu-notes">Saat ini sedang menempuh pendidikan tinggi di bidang Teknik Informatika</p>
+        <ul class="edu-detail-list">
+          <li>Jurusan: Teknik Informatika</li>
+          <li>Aktif belajar web development secara mandiri dan di kampus</li>
+       </ul>
+      </li>
+
+      <li class="reveal">
+        <p class="edu-period">TARGET — MASA DEPAN</p>
+        <h3 class="edu-level">Profesional Developer</h3>
+        <p class="edu-institution">Tujuan Karier</p>
+        <p class="edu-notes">Target saya adalah menjadi seorang Full Stack Web Developer yang kompeten, berkontribusi pada proyek-proyek nyata, dan terus berkembang di industri teknologi.</p>
+        <ul class="edu-detail-list">
+          <li>Membangun produk digital yang bermanfaat</li>
+          <li>Terus belajar</li>
+        </ul>
+      </li>
+
+    </ol>
+  </div>
+
+  <footer>
+    <p class="footer-left">&copy; 2026 <a href="index.html">Indra</a></p>
+    <p class="footer-right">
+      <a href="index.html" style="color:var(--accent); text-decoration:none;">Beranda</a> |
+      <a href="skill.html" style="color:var(--accent); text-decoration:none;">Skill Detail</a>
+    </p>
+  </footer>
+
+  <script>
+    const reveals = document.querySelectorAll('.reveal');
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) entry.target.classList.add('visible');
+      });
+    }, { threshold: 0.1 });
+    reveals.forEach(el => observer.observe(el));
+  </script>
+
+</body>
+</html>
