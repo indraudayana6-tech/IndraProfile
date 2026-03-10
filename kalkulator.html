@@ -1,0 +1,634 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Kalkulator — Indra</title>
+  <link rel="stylesheet" href="style.css" />
+  <!-- Bootstrap 5 -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"/>
+  <style>
+    body { padding-top: 72px; background-color: #0a0a0f; color: #f0f0f5; }
+
+    .page-hero {
+      padding: 80px 0 50px;
+      background: linear-gradient(135deg, rgba(167,139,250,0.04) 0%, transparent 60%);
+      border-bottom: 1px solid rgba(255,255,255,0.07);
+    }
+
+    .breadcrumb-custom {
+      font-family: 'Space Mono', monospace;
+      font-size: 0.75rem;
+      color: #55556a;
+      margin-bottom: 16px;
+    }
+    .breadcrumb-custom a { color: #7cffd4; text-decoration: none; }
+
+    .page-badge {
+      display: inline-block;
+      font-family: 'Space Mono', monospace;
+      font-size: 0.7rem;
+      color: #a78bfa;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      margin-bottom: 10px;
+    }
+    .page-badge::before { content: '// '; color: #55556a; }
+
+    .page-title {
+      font-family: 'Syne', sans-serif;
+      font-size: 2.8rem;
+      font-weight: 800;
+      color: #f0f0f5;
+      line-height: 1.1;
+    }
+    .page-title .hl { color: #a78bfa; }
+
+    /* === KALKULATOR UTAMA === */
+    .calc-wrapper {
+      background: #16161f;
+      border: 1px solid rgba(255,255,255,0.07);
+      border-radius: 24px;
+      overflow: hidden;
+      box-shadow: 0 30px 80px rgba(0,0,0,0.6);
+    }
+
+    /* DISPLAY */
+    .calc-display {
+      background: #0a0a0f;
+      padding: 28px 28px 20px;
+      border-bottom: 1px solid rgba(255,255,255,0.05);
+    }
+
+    .calc-history {
+      font-family: 'Space Mono', monospace;
+      font-size: 0.78rem;
+      color: #55556a;
+      text-align: right;
+      min-height: 20px;
+      margin-bottom: 8px;
+      word-break: break-all;
+    }
+
+    .calc-screen {
+      font-family: 'Syne', sans-serif;
+      font-size: 2.8rem;
+      font-weight: 800;
+      color: #f0f0f5;
+      text-align: right;
+      word-break: break-all;
+      line-height: 1.1;
+    }
+
+    .calc-screen.small { font-size: 1.8rem; }
+
+    /* BUTTONS GRID */
+    .calc-buttons {
+      padding: 20px;
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 12px;
+    }
+
+    .calc-btn {
+      padding: 18px 10px;
+      font-family: 'Syne', sans-serif;
+      font-size: 1.1rem;
+      font-weight: 700;
+      border: none;
+      border-radius: 12px;
+      cursor: pointer;
+      transition: all 0.15s ease;
+      outline: none;
+    }
+
+    .calc-btn:active { transform: scale(0.93); }
+
+    /* Tipe tombol */
+    .btn-num {
+      background: #1e1e2e;
+      color: #f0f0f5;
+      border: 1px solid rgba(255,255,255,0.07);
+    }
+    .btn-num:hover { background: #262636; border-color: rgba(255,255,255,0.15); }
+
+    .btn-op {
+      background: rgba(167,139,250,0.15);
+      color: #a78bfa;
+      border: 1px solid rgba(167,139,250,0.25);
+    }
+    .btn-op:hover { background: rgba(167,139,250,0.25); }
+
+    .btn-eq {
+      background: linear-gradient(135deg, #7cffd4, #5be8b8);
+      color: #0a0a0f;
+      border: none;
+      grid-column: span 2;
+    }
+    .btn-eq:hover { opacity: 0.85; box-shadow: 0 6px 20px rgba(124,255,212,0.3); }
+
+    .btn-clear {
+      background: rgba(255,100,100,0.15);
+      color: #ff6464;
+      border: 1px solid rgba(255,100,100,0.25);
+    }
+    .btn-clear:hover { background: rgba(255,100,100,0.25); }
+
+    .btn-del {
+      background: rgba(251,191,36,0.12);
+      color: #fbbf24;
+      border: 1px solid rgba(251,191,36,0.25);
+    }
+    .btn-del:hover { background: rgba(251,191,36,0.22); }
+
+    .btn-zero { grid-column: span 2; }
+
+    /* === KALKULATOR ILMIAH (tab kedua) === */
+    .calc-sci-buttons {
+      padding: 0 20px 20px;
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 10px;
+    }
+
+    .btn-sci {
+      padding: 12px 6px;
+      font-family: 'Space Mono', monospace;
+      font-size: 0.7rem;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: all 0.15s ease;
+      background: rgba(124,255,212,0.08);
+      color: #7cffd4;
+      border: 1px solid rgba(124,255,212,0.15);
+    }
+
+    .btn-sci:hover { background: rgba(124,255,212,0.18); }
+    .btn-sci:active { transform: scale(0.92); }
+
+    /* TABS Bootstrap override */
+    .nav-tabs { border-bottom: 1px solid rgba(255,255,255,0.07) !important; padding: 0 20px; }
+    .nav-tabs .nav-link {
+      color: #55556a !important;
+      font-family: 'Space Mono', monospace !important;
+      font-size: 0.75rem !important;
+      border: none !important;
+      padding: 14px 16px !important;
+      border-bottom: 2px solid transparent !important;
+      border-radius: 0 !important;
+    }
+    .nav-tabs .nav-link.active {
+      color: #7cffd4 !important;
+      background: transparent !important;
+      border-bottom-color: #7cffd4 !important;
+    }
+    .nav-tabs .nav-link:hover { color: #f0f0f5 !important; }
+
+    /* Riwayat */
+    .history-list {
+      max-height: 200px;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .history-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px 14px;
+      background: #0a0a0f;
+      border: 1px solid rgba(255,255,255,0.05);
+      border-radius: 8px;
+      font-family: 'Space Mono', monospace;
+      font-size: 0.78rem;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .history-item:hover { border-color: #7cffd4; }
+    .history-item .h-expr { color: #8888a0; }
+    .history-item .h-result { color: #7cffd4; font-weight: 700; }
+
+    .empty-history {
+      text-align: center;
+      padding: 24px;
+      font-family: 'Space Mono', monospace;
+      font-size: 0.75rem;
+      color: #55556a;
+    }
+
+    @media (max-width: 480px) {
+      .calc-screen { font-size: 2rem; }
+      .calc-btn { padding: 15px 6px; font-size: 1rem; }
+      .page-title { font-size: 2rem; }
+    }
+  </style>
+</head>
+<body>
+
+
+  <nav>
+    <a href="index.html" class="nav-logo">Indra<span>.profile</span></a>
+    <ul class="nav-links">
+      <li><a href="index.html#about">Tentang</a></li>
+      <li><a href="index.html#skills">Keahlian</a></li>
+      <li><a href="index.html#projects">Proyek</a></li>
+      <li><a href="pendidikan.html">Pendidikan</a></li>
+      <li><a href="skill.html">Skill</a></li>
+      <li><a href="form.html" style="color: var(--accent);">Form</a></li>
+      <li><a href="kalkulator.html">Kalkulator</a></li>
+      <li><a href="index.html#contact">Kontak</a></li>
+    </ul>
+  </nav>
+
+  <!-- PAGE HERO -->
+  <div class="page-hero">
+    <div class="container">
+      <p class="breadcrumb-custom"><a href="index.html">Beranda</a> / Kalkulator</p>
+      <h1 class="page-title">Kalku<span class="hl">lator</span></h1>
+      <p style="color:#8888a0; font-size:1rem; margin-top:12px; max-width:500px;">
+        Kalkulator interaktif dengan riwayat perhitungan
+      </p>
+    </div>
+  </div>
+
+  <!-- KALKULATOR -->
+  <div class="container py-5">
+    <div class="row justify-content-center g-4">
+
+      <!-- KALKULATOR CARD -->
+      <div class="col-lg-5 col-md-7">
+        <div class="calc-wrapper">
+
+          <!-- TABS -->
+          <ul class="nav nav-tabs" id="calcTabs">
+            <li class="nav-item">
+              <button class="nav-link active" data-bs-toggle="tab" data-bs-target="#tabStandard">Standar</button>
+            </li>
+            <li class="nav-item">
+              <button class="nav-link" data-bs-toggle="tab" data-bs-target="#tabSci">Ilmiah</button>
+            </li>
+            <li class="nav-item">
+              <button class="nav-link" data-bs-toggle="tab" data-bs-target="#tabHistory">Riwayat</button>
+            </li>
+          </ul>
+
+          <div class="tab-content">
+
+            <!-- TAB 1: STANDAR -->
+            <div class="tab-pane fade show active" id="tabStandard">
+              <!-- Display -->
+              <div class="calc-display">
+                <div class="calc-history" id="calcHistory"></div>
+                <div class="calc-screen" id="calcScreen">0</div>
+              </div>
+
+              <!-- Buttons -->
+              <div class="calc-buttons">
+                <button class="calc-btn btn-clear" onclick="clearAll()">AC</button>
+                <button class="calc-btn btn-del"   onclick="deleteLast()">⌫</button>
+                <button class="calc-btn btn-op"    onclick="inputOp('%')">%</button>
+                <button class="calc-btn btn-op"    onclick="inputOp('/')">÷</button>
+
+                <button class="calc-btn btn-num" onclick="inputNum('7')">7</button>
+                <button class="calc-btn btn-num" onclick="inputNum('8')">8</button>
+                <button class="calc-btn btn-num" onclick="inputNum('9')">9</button>
+                <button class="calc-btn btn-op"  onclick="inputOp('*')">×</button>
+
+                <button class="calc-btn btn-num" onclick="inputNum('4')">4</button>
+                <button class="calc-btn btn-num" onclick="inputNum('5')">5</button>
+                <button class="calc-btn btn-num" onclick="inputNum('6')">6</button>
+                <button class="calc-btn btn-op"  onclick="inputOp('-')">−</button>
+
+                <button class="calc-btn btn-num" onclick="inputNum('1')">1</button>
+                <button class="calc-btn btn-num" onclick="inputNum('2')">2</button>
+                <button class="calc-btn btn-num" onclick="inputNum('3')">3</button>
+                <button class="calc-btn btn-op"  onclick="inputOp('+')">+</button>
+
+                <button class="calc-btn btn-num" onclick="toggleSign()">+/−</button>
+                <button class="calc-btn btn-num btn-zero" onclick="inputNum('0')">0</button>
+                <button class="calc-btn btn-num" onclick="inputDot()">.</button>
+                <button class="calc-btn btn-eq"  onclick="calculate()">=</button>
+              </div>
+            </div>
+
+            <!-- TAB 2: ILMIAH -->
+            <div class="tab-pane fade" id="tabSci">
+              <div class="calc-display">
+                <div class="calc-history" id="calcHistorySci"></div>
+                <div class="calc-screen" id="calcScreenSci">0</div>
+              </div>
+              <div class="calc-sci-buttons">
+                <button class="calc-btn btn-sci" onclick="sciCalc('sin')">sin</button>
+                <button class="calc-btn btn-sci" onclick="sciCalc('cos')">cos</button>
+                <button class="calc-btn btn-sci" onclick="sciCalc('tan')">tan</button>
+                <button class="calc-btn btn-sci" onclick="sciCalc('log')">log</button>
+                <button class="calc-btn btn-sci" onclick="sciCalc('sqrt')">√</button>
+                <button class="calc-btn btn-sci" onclick="sciCalc('sq')">x²</button>
+                <button class="calc-btn btn-sci" onclick="sciCalc('inv')">1/x</button>
+                <button class="calc-btn btn-sci" onclick="sciCalc('pi')">π</button>
+                <button class="calc-btn btn-clear btn-sci" onclick="clearSci()">AC</button>
+                <button class="calc-btn btn-del btn-sci" onclick="deleteLastSci()">⌫</button>
+                <button class="calc-btn btn-sci" onclick="inputOpSci('%')">%</button>
+                <button class="calc-btn btn-op btn-sci" onclick="inputOpSci('/')">÷</button>
+                <button class="calc-btn btn-num btn-sci" onclick="inputNumSci('7')">7</button>
+                <button class="calc-btn btn-num btn-sci" onclick="inputNumSci('8')">8</button>
+                <button class="calc-btn btn-num btn-sci" onclick="inputNumSci('9')">9</button>
+                <button class="calc-btn btn-op btn-sci"  onclick="inputOpSci('*')">×</button>
+                <button class="calc-btn btn-num btn-sci" onclick="inputNumSci('4')">4</button>
+                <button class="calc-btn btn-num btn-sci" onclick="inputNumSci('5')">5</button>
+                <button class="calc-btn btn-num btn-sci" onclick="inputNumSci('6')">6</button>
+                <button class="calc-btn btn-op btn-sci"  onclick="inputOpSci('-')">−</button>
+                <button class="calc-btn btn-num btn-sci" onclick="inputNumSci('1')">1</button>
+                <button class="calc-btn btn-num btn-sci" onclick="inputNumSci('2')">2</button>
+                <button class="calc-btn btn-num btn-sci" onclick="inputNumSci('3')">3</button>
+                <button class="calc-btn btn-op btn-sci"  onclick="inputOpSci('+')">+</button>
+                <button class="calc-btn btn-num btn-sci" onclick="inputNumSci('0')" style="grid-column:span 2;">0</button>
+                <button class="calc-btn btn-num btn-sci" onclick="inputDotSci()">.</button>
+                <button class="calc-btn btn-eq btn-sci"  onclick="calculateSci()">=</button>
+              </div>
+            </div>
+
+            <!-- TAB 3: RIWAYAT -->
+            <div class="tab-pane fade" id="tabHistory">
+              <div style="padding: 20px;">
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">
+                  <p style="font-family:'Space Mono',monospace; font-size:0.75rem; color:#55556a; margin:0; letter-spacing:0.1em; text-transform:uppercase;">Riwayat Perhitungan</p>
+                  <button onclick="clearHistory()" style="font-family:'Space Mono',monospace; font-size:0.65rem; color:#ff6464; background:rgba(255,100,100,0.1); border:1px solid rgba(255,100,100,0.2); border-radius:6px; padding:4px 12px; cursor:pointer;">Hapus</button>
+                </div>
+                <div class="history-list" id="historyList">
+                  <div class="empty-history">Belum ada riwayat perhitungan</div>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- Keyboard hint -->
+        <p style="text-align:center; font-family:'Space Mono',monospace; font-size:0.68rem; color:#55556a; margin-top:14px;">
+          💡 Bisa juga menggunakan keyboard angka dan operator
+        </p>
+      </div>
+
+      <!-- INFO PANEL -->
+      <div class="col-lg-4 col-md-7">
+
+        <!-- Cara pakai -->
+        <div class="mb-4 p-4" style="background:#16161f; border:1px solid rgba(255,255,255,0.07); border-radius:16px;">
+          <p style="font-family:'Space Mono',monospace; font-size:0.7rem; color:#55556a; letter-spacing:0.1em; text-transform:uppercase; margin-bottom:16px;">// Cara Pakai</p>
+          <ul style="list-style:none; padding:0; display:flex; flex-direction:column; gap:10px;">
+            <li style="display:flex; gap:12px; font-size:0.88rem; color:#8888a0;">
+              <span style="color:#7cffd4; flex-shrink:0;">→</span> Klik tombol angka untuk memasukkan nilai
+            </li>
+            <li style="display:flex; gap:12px; font-size:0.88rem; color:#8888a0;">
+              <span style="color:#7cffd4; flex-shrink:0;">→</span> Klik operator (+, −, ×, ÷) untuk operasi
+            </li>
+            <li style="display:flex; gap:12px; font-size:0.88rem; color:#8888a0;">
+              <span style="color:#7cffd4; flex-shrink:0;">→</span> Tekan <strong style="color:#7cffd4;">=</strong> untuk melihat hasil
+            </li>
+            <li style="display:flex; gap:12px; font-size:0.88rem; color:#8888a0;">
+              <span style="color:#7cffd4; flex-shrink:0;">→</span> Tab <strong style="color:#a78bfa;">Ilmiah</strong> untuk fungsi sin, cos, log, dll
+            </li>
+            <li style="display:flex; gap:12px; font-size:0.88rem; color:#8888a0;">
+              <span style="color:#7cffd4; flex-shrink:0;">→</span> Tab <strong style="color:#7cffd4;">Riwayat</strong> untuk melihat log perhitungan
+            </li>
+          </ul>
+        </div>
+
+        <!-- Fitur -->
+        <div class="p-4" style="background:#16161f; border:1px solid rgba(255,255,255,0.07); border-radius:16px;">
+          <p style="font-family:'Space Mono',monospace; font-size:0.7rem; color:#55556a; letter-spacing:0.1em; text-transform:uppercase; margin-bottom:16px;">// Fitur</p>
+          <div class="row g-2">
+            <div class="col-6">
+              <div style="padding:14px; background:#0a0a0f; border:1px solid rgba(255,255,255,0.05); border-radius:10px; text-align:center;">
+                <div style="font-size:1.4rem; margin-bottom:6px;">➕</div>
+                <p style="font-size:0.78rem; color:#8888a0; margin:0;">Operasi Dasar</p>
+              </div>
+            </div>
+            <div class="col-6">
+              <div style="padding:14px; background:#0a0a0f; border:1px solid rgba(255,255,255,0.05); border-radius:10px; text-align:center;">
+                <div style="font-size:1.4rem; margin-bottom:6px;">🔬</div>
+                <p style="font-size:0.78rem; color:#8888a0; margin:0;">Fungsi Ilmiah</p>
+              </div>
+            </div>
+            <div class="col-6">
+              <div style="padding:14px; background:#0a0a0f; border:1px solid rgba(255,255,255,0.05); border-radius:10px; text-align:center;">
+                <div style="font-size:1.4rem; margin-bottom:6px;">📋</div>
+                <p style="font-size:0.78rem; color:#8888a0; margin:0;">Riwayat</p>
+              </div>
+            </div>
+            <div class="col-6">
+              <div style="padding:14px; background:#0a0a0f; border:1px solid rgba(255,255,255,0.05); border-radius:10px; text-align:center;">
+                <div style="font-size:1.4rem; margin-bottom:6px;">⌨️</div>
+                <p style="font-size:0.78rem; color:#8888a0; margin:0;">Keyboard</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- FOOTER -->
+  <footer style="border-top:1px solid rgba(255,255,255,0.07); padding:32px 40px; display:flex; justify-content:space-between; align-items:center; background:#0a0a0f;">
+    <p style="font-family:'Space Mono',monospace; font-size:0.78rem; color:#55556a;">&copy; 2026 <a href="index.html" style="color:#7cffd4; text-decoration:none;">Indra</p>
+    <div style="display:flex; gap:20px;">
+      <a href="form.html"  style="font-family:'Space Mono',monospace; font-size:0.72rem; color:#7cffd4; text-decoration:none;">← Form</a>
+      <a href="index.html" style="font-family:'Space Mono',monospace; font-size:0.72rem; color:#55556a; text-decoration:none;">Beranda</a>
+    </div>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script>
+    /* ===========================
+       KALKULATOR STANDAR
+       =========================== */
+    let display    = '0';
+    let expression = '';
+    let justCalc   = false;
+    let calcHistoryArr = [];
+
+    function updateScreen() {
+      const el = document.getElementById('calcScreen');
+      el.textContent = display;
+      el.className = 'calc-screen' + (display.length > 10 ? ' small' : '');
+    }
+
+    function updateHistoryDisplay() {
+      document.getElementById('calcHistory').textContent = expression;
+    }
+
+    function inputNum(n) {
+      if (justCalc) { display = n; expression = ''; justCalc = false; }
+      else display = display === '0' ? n : display + n;
+      updateScreen();
+    }
+
+    function inputOp(op) {
+      justCalc = false;
+      expression = display + ' ' + (op === '*' ? '×' : op === '/' ? '÷' : op) + ' ';
+      display = '0';
+      updateHistoryDisplay();
+    }
+
+    function inputDot() {
+      if (!display.includes('.')) display += '.';
+      updateScreen();
+    }
+
+    function toggleSign() {
+      display = display.startsWith('-') ? display.slice(1) : '-' + display;
+      updateScreen();
+    }
+
+    function clearAll() {
+      display = '0'; expression = ''; justCalc = false;
+      updateScreen(); updateHistoryDisplay();
+    }
+
+    function deleteLast() {
+      display = display.length > 1 ? display.slice(0, -1) : '0';
+      updateScreen();
+    }
+
+    function calculate() {
+      if (!expression) return;
+      const expr = expression.replace('×','*').replace('÷','/');
+      const num2 = parseFloat(display);
+      const fullExpr = expr + num2;
+      try {
+        let result = eval(fullExpr);
+        if (!isFinite(result)) { display = 'Error'; }
+        else {
+          result = parseFloat(result.toFixed(10));
+          const histEntry = { expr: expression + display, result: String(result) };
+          calcHistoryArr.unshift(histEntry);
+          renderHistory();
+          expression = '';
+          display = String(result);
+        }
+      } catch { display = 'Error'; }
+      justCalc = true;
+      updateScreen();
+      updateHistoryDisplay();
+    }
+
+    function renderHistory() {
+      const list = document.getElementById('historyList');
+      if (calcHistoryArr.length === 0) {
+        list.innerHTML = '<div class="empty-history">Belum ada riwayat perhitungan</div>';
+        return;
+      }
+      list.innerHTML = calcHistoryArr.map((h, i) =>
+        `<div class="history-item" onclick="useHistory(${i})">
+          <span class="h-expr">${h.expr}</span>
+          <span class="h-result">= ${h.result}</span>
+        </div>`
+      ).join('');
+    }
+
+    function useHistory(i) {
+      display = calcHistoryArr[i].result;
+      updateScreen();
+      // Switch to standard tab
+      document.querySelector('[data-bs-target="#tabStandard"]').click();
+    }
+
+    function clearHistory() {
+      calcHistoryArr = [];
+      renderHistory();
+    }
+
+    /* ===========================
+       KALKULATOR ILMIAH
+       =========================== */
+    let displaySci    = '0';
+    let expressionSci = '';
+    let justCalcSci   = false;
+
+    function updateSci() {
+      const el = document.getElementById('calcScreenSci');
+      el.textContent = displaySci;
+      el.className   = 'calc-screen' + (displaySci.length > 10 ? ' small' : '');
+      document.getElementById('calcHistorySci').textContent = expressionSci;
+    }
+
+    function inputNumSci(n) {
+      if (justCalcSci) { displaySci = n; expressionSci = ''; justCalcSci = false; }
+      else displaySci = displaySci === '0' ? n : displaySci + n;
+      updateSci();
+    }
+
+    function inputOpSci(op) {
+      justCalcSci = false;
+      expressionSci = displaySci + ' ' + (op === '*' ? '×' : op === '/' ? '÷' : op) + ' ';
+      displaySci = '0';
+      updateSci();
+    }
+
+    function inputDotSci() {
+      if (!displaySci.includes('.')) displaySci += '.';
+      updateSci();
+    }
+
+    function clearSci()    { displaySci = '0'; expressionSci = ''; justCalcSci = false; updateSci(); }
+    function deleteLastSci() { displaySci = displaySci.length > 1 ? displaySci.slice(0,-1) : '0'; updateSci(); }
+
+    function sciCalc(fn) {
+      const n = parseFloat(displaySci);
+      let result;
+      switch(fn) {
+        case 'sin':  result = Math.sin(n * Math.PI / 180); expressionSci = `sin(${n}°)`; break;
+        case 'cos':  result = Math.cos(n * Math.PI / 180); expressionSci = `cos(${n}°)`; break;
+        case 'tan':  result = Math.tan(n * Math.PI / 180); expressionSci = `tan(${n}°)`; break;
+        case 'log':  result = Math.log10(n);               expressionSci = `log(${n})`;  break;
+        case 'sqrt': result = Math.sqrt(n);                expressionSci = `√(${n})`;    break;
+        case 'sq':   result = n * n;                       expressionSci = `${n}²`;      break;
+        case 'inv':  result = 1 / n;                       expressionSci = `1/${n}`;     break;
+        case 'pi':   result = Math.PI;                     expressionSci = 'π';           break;
+      }
+      result = parseFloat(result.toFixed(10));
+      displaySci = String(result);
+      justCalcSci = true;
+      updateSci();
+    }
+
+    function calculateSci() {
+      if (!expressionSci) return;
+      const expr = expressionSci.replace('×','*').replace('÷','/');
+      const num2 = parseFloat(displaySci);
+      try {
+        let result = eval(expr + num2);
+        result = parseFloat(result.toFixed(10));
+        displaySci = String(result);
+        expressionSci = '';
+      } catch { displaySci = 'Error'; }
+      justCalcSci = true;
+      updateSci();
+    }
+
+    /* ===========================
+       KEYBOARD SUPPORT
+       =========================== */
+    document.addEventListener('keydown', function(e) {
+      const activeTab = document.querySelector('.tab-pane.active').id;
+      if (activeTab === 'tabStandard') {
+        if (e.key >= '0' && e.key <= '9') inputNum(e.key);
+        else if (e.key === '+') inputOp('+');
+        else if (e.key === '-') inputOp('-');
+        else if (e.key === '*') inputOp('*');
+        else if (e.key === '/') { e.preventDefault(); inputOp('/'); }
+        else if (e.key === 'Enter' || e.key === '=') calculate();
+        else if (e.key === 'Backspace') deleteLast();
+        else if (e.key === 'Escape') clearAll();
+        else if (e.key === '.') inputDot();
+      }
+    });
+  </script>
+</body>
+</html>
